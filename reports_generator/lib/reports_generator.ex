@@ -14,10 +14,14 @@
 defmodule ReportsGenerator do
   def build(filename) do
     "reports/#{filename}"
-    |> File.read()
-    |> handle_file()
+    |> File.stream!() # Read file line by line executing a function for each line
+    |> Enum.map(fn line -> parse_line(line) end) # &parse_line(&1)
   end
 
-  defp handle_file({:ok, file_content}), do: file_content
-  defp handle_file({:error, _reason}), do: "Error reading file!"
+  defp parse_line(line) do
+    line
+    |> String.trim()
+    |> String.split(",")
+    |> List.update_at(2, &String.to_integer/1)
+  end
 end

@@ -15,7 +15,12 @@ defmodule ReportsGenerator do
   def build(filename) do
     "reports/#{filename}"
     |> File.stream!() # Read file line by line executing a function for each line
-    |> Enum.map(fn line -> parse_line(line) end) # &parse_line(&1)
+    |> Enum.reduce(%{}, &sum_price/2)
+  end
+
+  defp sum_price(line, report) do
+    [id, _food_name, price] = parse_line(line)
+    Map.put(report, id, (report[id] || 0) + price)
   end
 
   defp parse_line(line) do

@@ -1,32 +1,26 @@
-# defmodule ReportsGenerator do alias ReportsGenerator.Parser
-#   def build(filename) do
-#     filename
-#     |> Parser.parse_file()
-#     |> Enum.reduce(%{}, fn line, acc_report -> sum_price_values(line, acc_report) end)
-#   end
-
-#   defp sum_price_values(line, acc_report) do
-#     [id, _food_name, price] = line
-#     Map.put(acc_report, id, (acc_report[id] || 0) + price)
-#   end
-# end
-
 defmodule ReportsGenerator do
+  alias ReportsGenerator.Parser
+
+  @report %{"foods" => %{}, "users" => %{}}
+  @options ["foods", "users"]
+
   def build(filename) do
-    "reports/#{filename}"
-    |> File.stream!() # Read file line by line executing a function for each line
-    |> Enum.reduce(%{}, &sum_price/2)
+    filename
+    |> Parser.parse_file()
+    |> Enum.reduce(@report, fn line, acc_report -> generate_reports(line, acc_report) end)
   end
 
-  defp sum_price(line, report) do
-    [id, _food_name, price] = parse_line(line)
-    Map.put(report, id, (report[id] || 0) + price)
+  def fetch_higher_cost(report, option) when option in @options do
+    max_value = Enum.max_by(report[option], fn {_key, price} -> price end)
+    {:ok, max_value}
   end
 
-  defp parse_line(line) do
-    line
-    |> String.trim()
-    |> String.split(",")
-    |> List.update_at(2, &String.to_integer/1)
+  def fetch_higher_cost(_report, _option), do: {:error, "Invalid option!"}
+
+  defp generate_reports([id, food_name, price], %{"foods" => foods, "users" => users} = report) do
+    users = Map.put(users, id, (users[id] || 0) + price)
+    foods = Map.put(foods, food_name, (foods[food_name] || 0) + 1)
+
+    %{report | "users" => users, "foods" => foods}
   end
 end

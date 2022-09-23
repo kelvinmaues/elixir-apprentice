@@ -2,6 +2,7 @@ defmodule ReportsGeneratorTest do
   use ExUnit.Case
 
   @file_name_test "report_test.csv"
+  @file_names_test ["report_test.csv", "report_test.csv"]
 
   describe "build/1" do
     test "builds the report" do
@@ -70,6 +71,52 @@ defmodule ReportsGeneratorTest do
       expected_response = {:error, "Invalid option!"}
 
       assert response == expected_response
+    end
+  end
+
+  describe "build_from_many/1" do
+    test "when the file list is provided, builds the report" do
+      # setup
+      file_names = @file_names_test
+
+      # exercise
+      response = ReportsGenerator.build_from_many(file_names)
+
+      expected_response =
+        {:ok,
+         %{
+           "foods" => %{
+             "açaí" => 2,
+             "churrasco" => 4,
+             "esfirra" => 6,
+             "hambúrguer" => 4,
+             "pizza" => 4
+           },
+           "users" => %{
+             "1" => 96,
+             "10" => 72,
+             "2" => 90,
+             "3" => 62,
+             "4" => 84,
+             "5" => 98,
+             "6" => 36,
+             "7" => 54,
+             "8" => 50,
+             "9" => 48
+           }
+         }}
+
+      # assertion
+      assert response == expected_response
+    end
+
+    test "when a file list is not provided, returns an error" do
+      response = ReportsGenerator.build_from_many("banana")
+
+      expected_response = {:error, "Please provide a list of strings"}
+
+      assert response == expected_response
+
     end
   end
 end

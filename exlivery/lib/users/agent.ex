@@ -19,18 +19,18 @@ defmodule Exlivery.Users.Agent do
     )
   end
 
-  defp get_user(agent_state, cpf) do
-    case agent_state[cpf] do
-      nil -> {:error, "User not found"}
-      user -> {:ok, user}
-    end
-  end
-
   def save(%User{} = user) do
     Agent.update(
       @module_name,
       &update_user(&1, user)
     )
+  end
+
+  defp get_user(agent_state, cpf) do
+    case agent_state[cpf] do
+      nil -> {:error, "User not found"}
+      user -> {:ok, user}
+    end
   end
 
   defp update_user(agent_state, %User{cpf: cpf} = user) do

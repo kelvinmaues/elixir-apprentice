@@ -4,7 +4,6 @@ defmodule Exlivery.Users.AgentTest do
   import Exlivery.Factory
 
   alias Exlivery.Users.Agent, as: UserAgent
-  alias Exlivery.Users.User
 
   describe "save/1" do
     test "saves the user" do
@@ -34,15 +33,7 @@ defmodule Exlivery.Users.AgentTest do
 
       response = UserAgent.get(user.cpf)
 
-      expected_response =
-        {:ok,
-         %User{
-           address: "Rua das Grumixamas",
-           age: 29,
-           cpf: "123456789",
-           email: "kelvin@email.com",
-           name: "Kelvin"
-         }}
+      expected_response = {:ok, user}
 
       assert response == expected_response
     end

@@ -1,6 +1,8 @@
 defmodule Exlivery.Users.UserTest do
   use ExUnit.Case
+
   import Exlivery.Factory
+
   alias Exlivery.Users.User
 
   describe "build/5" do

@@ -19,6 +19,8 @@ defmodule Exlivery.Orders.Agent do
     )
   end
 
+  def list, do: Agent.get(@module_name, & &1)
+
   defp get_order(agent_state, uuid) do
     case agent_state[uuid] do
       nil -> {:error, "Order not found"}
